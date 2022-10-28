@@ -26,5 +26,21 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	public MemberVO login(String id, String passwd) {
 		return dao.login(id, passwd);
-	} 
+	}
+
+	@Override
+	public MemberVO findEmail(String id) {
+		return dao.findEmail(id);
+	}
+
+	@Override
+	public String getRandomPw() {
+		return dao.getRandomPw();
+	}
+
+	@Override
+	public void memberUpdate(MemberVO vo) {
+		dao.memberUpdate(vo);
+	}
+ 
 }

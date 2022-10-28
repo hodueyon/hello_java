@@ -21,6 +21,8 @@ import co.edu.control.SignUp;
 import co.edu.control.SignUpForm;
 import co.edu.control.WriteBoard;
 import co.edu.control.WriteForm;
+import co.edu.control.passwdReConfirm;
+import co.edu.control.passwdReConfirmForm;
 
 
 //HttpServlet을 상속받는 서블릿임!
@@ -54,7 +56,9 @@ public class FrontController extends HttpServlet {
 		controlList.put("/signInForm.do", new SignInForm());
 		controlList.put("/signIn.do", new SignIn());
 		controlList.put("/signOut.do", new SignOut());
-	}
+		controlList.put("/passwdReConfirmForm.do", new passwdReConfirmForm());
+		controlList.put("/passwdReConfirm.do", new passwdReConfirm());
+	}	
 	
 	//service() - 실행될때마다 작동
 	@Override

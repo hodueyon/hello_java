@@ -14,7 +14,7 @@
 	<tbody>
 		<c:forEach var="vo" items="${bList }">
 			<tr>
-				<td><a href = "searchBoard.do?bno= ${vo.boardNo}">${vo.boardNo}</a></td>
+				<td><a href = "searchBoard.do?bno=${vo.boardNo}">${vo.boardNo}</a></td>
 				<td>${vo.title }</td>
 				<td>${vo.writer }</td>
 				<td>${vo.writeDate }</td>

@@ -19,6 +19,7 @@ public class SearchBoard implements Control {
 		//bno 파라메터읽기
 		
 		String bno = req.getParameter("bno");
+
 		
 		BoardService service = new BoardServiceImpl();
 		BoardVO board = service.findBoard(Integer.parseInt(bno));
