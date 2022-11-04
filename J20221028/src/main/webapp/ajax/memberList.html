@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>memberList.html</title>
+</head>
+<body>
+	<h3>Ajax Get 방식 호출</h3>
+	<h3>회원등록페이지.</h3>
+	<form name="submitFrm" method="post">
+		id: <input type="text" id="id"><br>
+		pass : <input type="text" id="passwd"><br>
+		email : <input type="email" id="email"><br>
+		name:<input type="text" id="name"><br>
+		<input type="submit" value="등록">
+	</form>
+	<p>===================================</p>
+	<div id="show">
+		<table border="1">
+			<thead>
+				<tr><th>아이디</th> 
+					<th>이름</th>
+					<th>이메일</th>
+					<th>권한</th>
+					<th>삭제</th>
+				</tr>
+			</thead>
+			<tbody id ="list">
+			</tbody>					
+		</table>
+	</div>
+	
+	<script>
+
+		//ajax 호출.
+		let ajax = new XMLHttpRequest();
+		//ajax.open('get/post타임', 'url')
+		ajax.open('get','../MemberListServlet'); //요청페이지 지정
+		ajax.send(); //요청
+		ajax.onload = loadCallback //로딩되면 loadCallback함수 실행!
+			
+		
+		//ajax 객페에 로드 이벤트 발생할 때 실행할 콜백 합수.
+		function loadCallback() {
+			console.log(this.responseText)
+			let data = JSON.parse(this.responseText);
+			//responseText : 서버에 요청하여 응답으로 받은 데이터를 문자열로 반환.//
+			//Json.parse(this.responseText) - 문자열을 Json데이터로 변환
+			
+			
+			data.forEach(row => {
+				document.getElementById('list').append(makeTr(row));
+			});
+			
+		}
+
+		//data한건 tr생성해주는 함수
+		function makeTr(obj){ //obj == row같은거. 
+			let tr = document.createElement('tr');
+			tr.setAttribute('id','tr_'+obj.id);
+			//tr에 있는 id값 가져오기//
+			for(let field in obj){
+				if(field == 'passwd') continue;
+				
+				let td = document.createElement('td');
+				let txt = document.createTextNode(obj[field]);
+				td.append(txt);
+				tr.append(td);
+			}
+			//버튼(삭제);
+			let btn = document.createElement('button');
+			btn.addEventListener('click', delFnc);
+			let td = document.createElement('td');
+			btn.textContent='삭제';
+			td.append(btn);
+			tr.append(td);
+			
+			return tr;
+		}
+		
+		//등록 눌렀을때 db에 저장시킬라구
+		//on___ : event와 관련된 메소드?
+			submitFrm.onsubmit= addCallback;
+		
+		function addCallback() {
+			event.preventDefault(); //기본기능을 차단
+			
+			console.log('뻐큐');
+			//submitFrm.submit();
+			let id = document.getElementById('id').value;
+			let pw = document.getElementById('passwd').value;
+			let em = document.getElementById('email').value;
+			let nm = document.getElementById('name').value;
+			let check = id && pw && em && nm;
+			if(!check){
+				alert('필수항목입니다.')
+				return false;
+			}
+			
+			let data = 'id='+id+'&passwd='+pw+'&email='+em+'&name='+nm + '&job=insert';
+			
+			//ajax 호출
+			let ajax = new XMLHttpRequest();
+			ajax.open('post', '../MemberListServlet');
+			ajax.setRequestHeader('Content-type', 'applic, findation/x-www-form-urlencoded');
+			ajax.send(data);
+			ajax.onload = loadDataCallback;
+			
+			return false; //페이지를 새로고침 하지 않음.
+				
+		}
+		
+		//새로 등록한 데이터를 화면에 출력.
+		function loadDataCallback(){
+			console.log(this.responseText);
+			//responseText : 서버에 요청하여 응답으로 받은 데이터를 문자열로 반환.//
+			let obj = JSON.parse(this.responseText);
+			document.getElementById('list').append(makeTr(obj));
+			
+		}
+		
+		//삭제처리 서브릿 호출
+		function delFnc(){
+			//oid : tr_user1111
+			let oid = this.parentElement.parentElement.getAttribute('id');
+			let id = oid.substring('tr_'.length);
+			//td, tr의 id요건을 읽어오고 싶다.
+			//서블릿 호출 db삭제
+			let delAjax = new XMLHttpRequest();
+			delAjax.open('post', '../MemberListServlet');
+			delAjax.setRequestHeader('Content-type','application/x-www-form-urlencoded');
+			delAjax.send('id='+id+"&job=delete");
+			//memberListServlet 호출하는데 id, job=delete값 같이보냄 -> 삭제하게끔
+
+			delAjax.onload = function(){
+				console.log(delAjax.responseText);
+				let result = delAjax.responseText;
+				if(result == 'success'){
+					document.getElementById(oid).remove();											
+				}else if(result == 'fail'){
+					alert('처리중 에러 !')
+				}
+			}
+			
+			//화면에서도 삭제.
+
+		}
+		
+				
+	</script>
+</body>
+</html>

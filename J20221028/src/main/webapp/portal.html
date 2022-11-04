@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>Insert title here</title>
+</head>
+
+<body>
+	시도 : <input type="text" id="sido"><button id="findBtn">찾기</button><br>
+	<div id="show">
+		<table border="1">
+			<thead>
+				<tr>
+					<th>센터id</th>
+					<th>센터명</th>
+					<th>연락처</th>
+				</tr>
+			</thead>
+			<tbody id="list">
+			</tbody>
+		</table>
+	</div>
+	<script>
+		let url =
+			'https://api.odcloud.kr/api/15077586/v1/centers?page=1&perPage=284&serviceKey=kXYUIGsEAx1r27IP08jggeNOPdkZ6VcKh2T4eAFxZIwRo2xqHyypvk52CZvuT54rl9%2BEpy%2Fx0M4FaH2uzhiJkQ%3D%3D';
+
+
+		fetch(url)
+			.then(result => result.json()) //json -> object
+			.then(showList)
+			.catch(error => console.log(error));
+
+		//
+		let total;
+
+		function showList(result) {
+			console.log(result) // totaclCount, data, page, current..else 다양한 속성값이 존재한당.
+			//result.data.forEach(center => console.log(center.id));
+			result.data.forEach(center => document.getElementById('list').append(makeTr(center)));
+
+			total = result.data;
+		}
+
+		function makeTr(center) {
+			//result.data.forEach(center => console.log(center.centerName));
+
+			let tr = document.createElement('tr');
+
+			let fields = ['id', 'centerName', 'phoneNumber'];
+
+			for (let field of fields) {
+				let td = document.createElement('td');
+				let txt = document.createTextNode(center[field]);
+				td.append(txt);
+				tr.append(td);
+			}
+			return tr;
+
+		}
+
+		let findBtn = document.getElementById('findBtn');
+
+		findBtn.addEventListener('click', findData);
+
+		
+		function findData() {
+			//지운거
+			document.querySelectorAll('#list>tr').forEach(tr => tr.remove());
+			
+			let sido = document.getElementById('sido').value;
+			
+			total.forEach(center => {
+				if(center.sido ==sido){
+					document.getElementById('list').append(makeTr(center));
+				}
+			})
+
+		}
+	</script>
+</body>
+
+</html>

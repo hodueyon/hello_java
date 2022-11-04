@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+	<title>cal.html</title>
+	<script>
+		let obj = {
+			id : 'hong',
+			age : 20
+		}
+		obj = {} //new Object();
+		let ary = [] //new Array();
+		let today = new Date();
+
+		document.addEventListener('DOMContentLoaded',function(){
+			today = new Date(2022, 9, 01);
+			let thisDay = today.getDay(); //요일
+			let year = today.getFullYear();
+			let month = today.getMonth();
+			let lastDate = new Date( year, month+1, 0).getDate(); //일자
+			console.log(thisDay);
+			console.log(lastDate);
+			console.log(year);
+			console.log(month);
+
+        let table = document.createElement('table');
+        table.setAttribute('border','1');
+        let tbody= document.createElement('tbody');
+        let tr = document.createElement('tr');
+        tbody.append(tr);
+
+		//요일지정
+		for (let i =0; i<thisDay; i++){
+			let td = document.createElement('td');
+			tr.append(td);
+		}
+        
+        // >> 숫자생성(달력날짜)_ 캘린더형태
+        for(let i = 1; i<=lastDate; i++){ //계속 td를 tr(줄)에 붙이기 위해 반복문 사용!
+            let td = document.createElement('td');
+            td.textContent=i;
+            tr.append(td);
+            if((i+thisDay)%7==0){//4주로 나누기
+                tr= document.createElement('tr');
+                tbody.append(tr);
+			}
+        }
+       table.append(tbody)
+       document.getElementById('show').append(table);
+
+	   let thing = document.querySelectorAll('#show>table>tr>td');
+		console.log(thing);
+	   
+  
+    })
+
+	</script>
+	</head>
+<body>
+
+	<div id="show"></div>
+	<script>
+	console.log('4')
+	</script>
+</body>
+</html>

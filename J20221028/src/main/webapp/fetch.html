@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>fetch.html</title>
+</head>
+
+<body>
+	<h3>회원등록페이지.</h3>
+	<form name="submitFrm" method="post">
+		id: <input type="text" id="id"><br>
+		pass : <input type="text" id="passwd"><br>
+		email : <input type="email" id="email"><br>
+		name:<input type="text" id="name"><br>
+		<input type="submit" value="등록">
+	</form>
+
+	<div id='show'>
+		<table border="1">
+			<thead>
+				<tr><th>아이디</th> 
+					<th>이름</th>
+					<th>이메일</th>
+					<th>권한</th>
+					<th>삭제</th>
+				</tr>
+			</thead>
+			<tbody id ="list">
+			</tbody>					
+		</table>
+	</div>
+
+	<script>
+		//ajax 객페에 로드 이벤트 발생할 때 실행할 콜백 합수.
+		document.forms.submitFrm.onsubmit = addFunc;
+		/**/
+		function addFunc() {
+			let id = document.getElementById('id').value;
+			let pw = document.getElementById('passwd').value;
+			let em = document.getElementById('email').value;
+			let nm = document.getElementById('name').value;
+			let check = id && pw && em && nm;
+			if (!check) {
+				alert('필수항목입니다.')
+				return false;
+			}
+
+			let data = 'id=' + id + '&passwd=' + pw + '&email=' + em + '&name=' + nm + '&job=insert';
+			//ajax호출
+			fetch('./MemberListServlet', {
+					method: 'post',
+					headers: {
+						'Content-type': 'application/x-www-form-urlencoded'
+
+					},
+					body: data
+				})
+				.then(result => result.json())
+				.then(addCallback)
+				.catch();
+
+			return false;
+		}
+
+		//한건 출력 기능
+		function addCallback(result) {
+			console.log(result);
+			document.querySelector('#list').append(makeTr(result));
+		
+			//화면입력초기화
+			document.getElementById('id').value = '';
+			document.querySelector('#name').value = '';
+			document.getElementById('email').value = '';
+			document.getElementById('passwd').value = '';
+			//getElementByid = querySelector 같은 기능을 함. 방식만 다른거
+		}
+
+		//data한건 tr생성해주는 함수
+		function makeTr(obj) { //obj == row같은거. 
+			let tr = document.createElement('tr');
+			tr.setAttribute('id', 'tr_' + obj.id);
+			//tr에 있는 id값 가져오기//
+			for (let field in obj) {
+				if (field == 'passwd') continue;
+
+				let td = document.createElement('td');
+				let txt = document.createTextNode(obj[field]);
+				td.append(txt);
+				tr.append(td);
+			}
+			//버튼(삭제);
+			let btn = document.createElement('button');
+			//btn.addEventListener('click', delFnc);
+			let td = document.createElement('td');
+			btn.textContent = '삭제';
+			td.append(btn);
+			tr.append(td);
+
+			return tr;
+		}
+
+		//fetch = XMLHttpRequest()을 간단하게 수행할 수 있게해준다!
+		fetch('MemberListServlet') // json 타임호출
+			.then(result => result.json()) //json데이터 가져온다..?
+			//잘 실행되면 then() 실행
+			.then(showData)
+			.catch(function (err) {
+				console.log(err);
+			}) //오류나며 ㄴcatch()실행
+
+		function showData(result) {
+			console.log(result);
+		}
+	</script>
+</body>
+
+</html>
