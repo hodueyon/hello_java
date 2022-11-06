@@ -7,6 +7,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import co.edu.book.BookVO;
 import co.edu.common.BookDAO;
 
@@ -24,7 +27,6 @@ public class BookAddServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
 		
-		response.getWriter().append("Served at: ").append(request.getContextPath());
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -34,6 +36,7 @@ public class BookAddServlet extends HttpServlet {
 		response.setContentType("text/json;charset=utf-8");
 		
 		BookDAO dao = new BookDAO();
+		
 		String bookCode = request.getParameter("bookCode");
 		String bookName = request.getParameter("bookName");
 		String author = request.getParameter("author");
@@ -41,6 +44,7 @@ public class BookAddServlet extends HttpServlet {
 		int price = Integer.parseInt(request.getParameter("price"));
 		
 		BookVO vo = new BookVO();
+		
 		vo.setBookCode(bookCode);
 		vo.setBookName(bookName);
 		vo.setAuthor(author);
@@ -48,6 +52,9 @@ public class BookAddServlet extends HttpServlet {
 		vo.setPrice(price);
 		
 		dao.inputList(vo);
+		
+		Gson gson = new GsonBuilder().create();
+		response.getWriter().print(gson.toJson(vo));
 		
 	}
 

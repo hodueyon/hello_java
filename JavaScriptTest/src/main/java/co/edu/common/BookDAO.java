@@ -11,8 +11,8 @@ public class BookDAO extends DAO {
 		List<BookVO> list = new ArrayList<>();
 		BookVO vo = new BookVO();
 		
-		conn=getConnect();
-		String sql = "select * from tbl_book";
+		conn= getConnect();
+		String sql = "select * from tbl_book order by book_code";
 		try {
 			psmt = conn.prepareStatement(sql);
 			rs = psmt.executeQuery();
@@ -35,6 +35,7 @@ public class BookDAO extends DAO {
 		return list;
 	}//end bookList
 	
+	// 추가
 	public void inputList(BookVO vo) {
 		conn = getConnect();
 		
@@ -58,7 +59,7 @@ public class BookDAO extends DAO {
 	}// end inputList;
 	
 	//한건 삭제
-	public void delList(String bookCode) {
+	public boolean delList(String bookCode) {
 		conn = getConnect();
 		String sql = "delete from tbl_book where book_code =?";
 		
@@ -67,13 +68,17 @@ public class BookDAO extends DAO {
 			
 			psmt.setString(1, bookCode);
 			
-			psmt.executeUpdate();
+			int r = psmt.executeUpdate();
+			
+			if(r>0) {
+				return true;
+			}
 		} catch (SQLException e) {
 
 			e.printStackTrace();
 		}finally {
 			disconnect();
 		}
-
+		return false;
 	}
 }

@@ -32,9 +32,14 @@ public class BookDelServlet extends HttpServlet {
 		response.setContentType("text/json;charset=utf-8");
 		
 		BookDAO dao = new BookDAO();
+		
 		String bookCode = request.getParameter("bookCode");
 		
-		dao.delList(bookCode);
+		if(dao.delList(bookCode)) {
+			response.getWriter().print("O");
+		}else {
+			response.getWriter().print("X");
+		}
 		doGet(request, response);
 	}
 

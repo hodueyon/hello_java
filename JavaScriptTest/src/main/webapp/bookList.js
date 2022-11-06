@@ -1,18 +1,19 @@
 //bookList.js
-fetch('./BookListServlet')
-.then( result => result.json())
-.then( bookListShow)
-.catch( err => console.error(err));
 
-let data = result.data
+document.addEventListener('DOMContentLoaded', function () {
+	fetch('./BookListServlet')
+	.then( result => result.json())
+	.then( bookListShow)
+	.catch( err => console.error(err));
 
-function bookListShow(result){
-	
-    let data = result;
-    let tbody = document.querySelector('#list');
-    data.forEach(row => {
-        tbody.append(makeTr(row));
-    });
+
+	function bookListShow(result){
+		console.log(result);
+		
+	    let tbody = document.querySelector('#list');
+	    result.forEach(row => {
+	        tbody.append(makeTr(row));
+		});
 
     //저장
     document.querySelector('#save').addEventListener('click',addFunc);
@@ -21,16 +22,9 @@ function bookListShow(result){
     document.querySelector('#delAll').addEventListener('click',delChecked);
 
     //한건삭제
-    document.querySelectorAll('#list>tr>td>button').addEventListener('click',delData);
-}
+    document.querySelectorAll('#list>tr>button').addEventListener('click',delData);
+	}
 
-let titles = {
-    book_code : '도서코드',
-    book_name : '도서명',
-    author : '작가',
-    press :'출판사',
-    price : '가격'
-}
 
 //저장
 function addFunc(){
@@ -39,6 +33,13 @@ function addFunc(){
     let author = document.getElementById('author').value;
     let press = document.getElementById('press').value;
     let price = document.getElementById('price').value;
+    let check = code && name && author && press && price;
+    
+    if(!check){
+		alert('필수항목입니다.');
+		return false;
+	}
+    
     
     let data = 'bookCode='+code+ '&bookName=' + name+ '&author='+author + '&press='+press+ '&price'+price;
 
@@ -52,44 +53,70 @@ function addFunc(){
     })
     .then(data => data.json())
     .then(addCallback)
-    .catch();
-
-
-    //입력칸 초기화
-    document.getElementById('bookCode').value = "";
-    document.getElementById('bookName').value = "";
-    document.getElementById('author').value = "";
-    document.getElementById('press').value = "";
-    document.getElementById('price').value = "";    
+    .catch(err => console.log(err));
+	
+	return false;
 }
+
+//리스트에보여주기
+	function addCallback(result){
+		document.querySelector('#list').append(makeTr(result));
+	
+		 //입력칸 초기화
+	    document.getElementById('bookCode').value = "";
+	    document.getElementById('bookName').value = "";
+	    document.getElementById('author').value = "";
+	    document.getElementById('press').value = "";
+	    document.getElementById('price').value = "";    	
+		
+	}
 
 //makeTr(row)
-function makeTr(row){
-    let tr = document.createElement('tr');
-
-    for(let field in titles){
-        let td = document.createElement('td');
-        let ckBox = document.createElement('input');
-        ckBox.setAttribute('type','checkbox');
-        let txt = document.createTextNode(row[field]);
-        let delbtn = document.createElement('button');
-        delbtn.textContent = "삭제";
-        td.append(txt, delbtn);
-        tr.appendChild(td);
-    }
-    document.getElementById('list').append(tr);
-}
+	function makeTr(obj){
+	    let tr = document.createElement('tr');
+		tr.setAttribute('id', obj.bookCode);
+		
+		//체크박스
+	   let td = document.createElement('td');
+	   let chkBox = document.createElement('input');
+	   chkBox.setAttribute("type","checkbox");
+	   chkbox.addEventListener('change', function () {
+				document.querySelectorAll('#list input[type="checkbox"]').forEach(function (check) {
+					check.checked = chkbox.checked;
+				});
+			});
+	   td.appendChild(chkBox);
+	   tr.appendChild(td);
+	   
+	   //리스트
+	   for(let field in obj) {
+			let td = document.createElement('td');
+					let txt = document.createTextNode(obj[field]);
+	
+					td.append(txt);
+					tr.append(td);
+		}
+		
+		//삭제버튼
+		td = document.createElement('td');
+		let btn = document.createElement('button');
+		button.addEventListener('click', delBook);
+		button.textContent = '삭제';
+		td.append(button);
+		tr.append(td);
+	
+		return tr;
+		
+	}
 
 //선택 삭제
 function delChecked(){	
-    let trs = document.querySelectorAll('#form>table>tbody>tr');
-    console.log('checked');
+    let trs = document.querySelectorAll('#list>table>tbody>tr');
 
     for(let i =0; i<trs.length; i++){
-        if(trs[i].children[0].firstElementChild.checked){
-            trs[i].remove();
-            
-            let code = trs[i].children[1];
+        if(trs[i].children[0].children[0].checked){
+              
+            let code = trs[i].id;
 
             let data = 'bookCode='+code ;
             
@@ -103,18 +130,18 @@ function delChecked(){
             })
             .then(data => data.json())
             .then(addCallback)
-            .catch();
+            .catch(err => console.log(err));
+            
+            trs[i].remove();
         }
     }
 }// end of  delchecked();
 
 //한건 삭제 
 function delData(){
-    delbtn.parentElement.parentElement.remove();
+	let target = this.parentElement.parentElement.getAttribute('id');
     
-    let code = document.getElementById('bookCode').value;
-
-    let data = 'bookCode='+code;
+    let data = 'bookCode='+target;
 
     fetch('./BookDelServlet', {
         method: 'post',
@@ -124,11 +151,14 @@ function delData(){
 				},
 		body: data
     })
-    .then(data => data.json())
+    .then(data => data.text())
     .then(addCallback)
-    .catch();
+    .catch(err => console.log(err));
+    
+    delbtn.parentElement.parentElement.remove();
 }
 
 
 
 
+});
