@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- mybatis 환경설정 -->
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<settings>
+		  <setting name="jdbcTypeForNull" value="NULL"/>
+			<!-- jdbc에서 null이 들어오면 빈 값이 아니라 null로 인식하라고 해주는거 -->
+		  <setting name="mapUnderscoreToCamelCase" value="true"/>
+		  <!-- db에서 쓰던 언더바를 카멜케이스로 바꾸셈 -->	
+	</settings>
+	<environments default="development">
+		<environment id="development">
+			<transactionManager type="JDBC" />
+			<dataSource type="POOLED">
+				<property name="driver" value="oracle.jdbc.driver.OracleDriver" />
+				<property name="url" value="jdbc:oracle:thin:@localhost:1521:xe" />
+				<property name="username" value="pih" />
+				<property name="password" value="pih" />
+			</dataSource>
+		</environment>
+	</environments>
+	
+	<mappers>
+		<!-- 쿼리를 여기서 가져오라고 주소 써줌 -->
+		<mapper resource="co/micol/prj/book/mapper/BookMapper.xml" />
+	</mappers>
+</configuration>

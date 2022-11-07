@@ -80,9 +80,9 @@ function addFunc(){
 	   let td = document.createElement('td');
 	   let chkBox = document.createElement('input');
 	   chkBox.setAttribute("type","checkbox");
-	   chkbox.addEventListener('change', function () {
+	   chkBox.addEventListener('change', function () {
 				document.querySelectorAll('#list input[type="checkbox"]').forEach(function (check) {
-					check.checked = chkbox.checked;
+					check.checked = chkBox.checked;
 				});
 			});
 	   td.appendChild(chkBox);
@@ -90,6 +90,7 @@ function addFunc(){
 	   
 	   //리스트
 	   for(let field in obj) {
+		console.log(field);
 			let td = document.createElement('td');
 					let txt = document.createTextNode(obj[field]);
 	
