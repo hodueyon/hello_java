@@ -20,9 +20,10 @@ public class BookList implements Command {
 		// interface는 자기자신을 초기화하지 못하기때문에 BookServiceImpl이라는 구현체로 초기화 하는거
 		List<BookVO> books = new ArrayList<>(); 
 		books = dao.bookSelectList(); //전체목록
-		request.setAttribute("books", books); //결과를 request 객체에 books란 이름으로 list 형태로 담음
+		request.setAttribute("books", books); 
+		//결과를 request 객체에 books란 이름으로 list 형태로 담음
 		
-		return "book/bookList";
+		return "book/bookList"; //보여줄 페이지
 	}
 
 }

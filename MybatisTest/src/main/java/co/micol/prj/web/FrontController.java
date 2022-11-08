@@ -14,6 +14,12 @@ import javax.servlet.http.HttpServletResponse;
 import co.micol.prj.book.command.BookList;
 import co.micol.prj.common.Command;
 import co.micol.prj.main.MainCommand;
+import co.micol.prj.member.command.AjaxIdCheck;
+import co.micol.prj.member.command.Logout;
+import co.micol.prj.member.command.MemberJoin;
+import co.micol.prj.member.command.MemberJoinForm;
+import co.micol.prj.member.command.MemberLogin;
+import co.micol.prj.member.command.MemberLoginForm;
 
 /**
  * 모든 요청을 받아들이는 컨트롤러
@@ -30,7 +36,13 @@ public class FrontController extends HttpServlet {
 	//요청한 것을 실행하는 명령을 모아두는 곳
 	public void init(ServletConfig config) throws ServletException{
 		map.put("/main.do", new MainCommand()); //처음 보여줄 페이지 명령 //main.do가 들어오면 MainCommand 호출시킴
-		map.put("/bookList.do", new BookList());
+		map.put("/bookList.do", new BookList()); //책목록
+		map.put("/memberLoginForm.do", new MemberLoginForm()); //로그인 폼 호출
+		map.put("/memberLogin.do", new MemberLogin()); //멤버포그인처리
+		map.put("/logout.do", new Logout()); //로그아웃
+		map.put("/memberJoinForm.do", new MemberJoinForm());//회원가입폼 호출
+		map.put("/ajaxIdCheck.do", new AjaxIdCheck()); //ajax를 이용해 아이디 중복체크
+		map.put("/memberJoin.do", new MemberJoin()); //횐가입
 	}
 
 	//요청을 분석하고 실행, 결과를 돌려주는 곳
@@ -50,8 +62,18 @@ public class FrontController extends HttpServlet {
 		if(!viewPage.endsWith(".do") && viewPage != null) {
 			//리턴되는 문자열에서 .do가 포함되어있지 않다면
 			//ajax처리 startswith(ajax)
+			if(viewPage.startsWith("ajax:")) {
+				response.setContentType("text/html; charset=UTF-8");
+				response.getWriter().append(viewPage.substring(5));
+				//viewPage.substring(5) = ajax:result~~에서 ajax:를 잘라버리는거
+				return;
+			}
 			//tiles 돌아가는곳..endswith(.tiles)이런식으로 추가하면 될듯함.
-			viewPage = "/WEB-INF/views/"+ viewPage +".jsp"; //web-inf/view/에서 viewPage.jsp를 찾게끔
+			if(!viewPage.endsWith(".tiles")) {
+				viewPage = "/WEB-INF/views/"+ viewPage +".jsp"; //web-inf/view/에서 viewPage.jsp를 찾게끔
+				//tiles를 안태울때
+			}
+			
 			RequestDispatcher dispatcher = request.getRequestDispatcher(viewPage);
 			dispatcher.forward(request,response);
 		} else {
